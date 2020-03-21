@@ -34,7 +34,12 @@ function App() {
 
   return (
     <GameProvider
-      value={{ gameData: gameData, fetchPage: fetchPage, setFilter: setFilter }}
+      value={{
+        gameData: gameData,
+        fetchPage: fetchPage,
+        filters: filters,
+        setFilter: setFilter
+      }}
     >
       <Router>
         <Switch>

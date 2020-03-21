@@ -8,15 +8,21 @@ const Library = () => {
 
   const [showDetails, setShowDetails] = useState(false);
   const [current, setCurrent] = useState(null);
+  const [loadingImages, setloadingImages] = useState(true);
+
+  let imageCount = 0;
 
   const previousPage = () => {
     if (context.gameData.previous !== null) {
+      setloadingImages(true);
       context.fetchPage(context.gameData.previous);
     }
   };
 
   const nextPage = () => {
     if (context.gameData.next !== null) {
+      setloadingImages(true);
+
       context.fetchPage(context.gameData.next);
     }
   };
@@ -24,7 +30,10 @@ const Library = () => {
   const changeFilter = () => {};
 
   const checkLoad = () => {
-    console.log("image loaded: ");
+    imageCount++;
+    if (imageCount === context.filters.page_size) {
+      setloadingImages(false);
+    }
   };
 
   const platformIcon = platform => {
@@ -37,19 +46,58 @@ const Library = () => {
     );
   };
 
+  const handleHover = id => {
+    setCurrent(id);
+    setTimeout(() => {
+      setShowDetails(true);
+    }, 250);
+  };
+
+  const handleLeave = () => {
+    setCurrent(null);
+    setShowDetails(false);
+  };
+
   return (
     <div className="[ library ]">
+      <div className="[ library__controlContainer ]">
+        <div className="[ library__paginationControl ]">
+          <button
+            onClick={previousPage}
+            className="[ library__paginationControl__button ]"
+          >
+            Previous Page
+          </button>
+          <button
+            onClick={nextPage}
+            className="[ library__paginationControl__button ]"
+          >
+            Next Page
+          </button>
+        </div>
+      </div>
+
       {context.gameData !== null && (
-        <div className="[ library__container ]">
+        <div
+          className={
+            "[ library__container ]" +
+            (loadingImages ? "[ library__loadingImages ]" : "")
+          }
+        >
           {context.gameData.results.map((value, index) => {
             return (
               <Link
+                onMouseEnter={() => handleHover(value.id)}
+                onMouseLeave={handleLeave}
                 to={{
                   pathname: "/game",
                   search: `?id=${value.id}`
                 }}
                 key={index}
-                className="[ library__card ]"
+                className={
+                  "[ library__card ]" +
+                  (value.id === current ? "[ library__openCard ]" : "")
+                }
               >
                 {value.background_image !== null ? (
                   <img
@@ -66,24 +114,35 @@ const Library = () => {
                     alt=""
                   />
                 )}
-                <div className="[ library__detailContainer ]">
+                <div
+                  className={
+                    "[ library__detailContainer ]" +
+                    (value.id === current && showDetails
+                      ? "[ library__showDetails ]"
+                      : "")
+                  }
+                >
                   <h2 className="[ library__cardTitle ]">{value.name}</h2>
-                  {showDetails && value.id === current && (
-                    <div className="[ library__cardPlatforms ]">
-                      {value.platforms.map((platform, index) => {
-                        return platformIcon(platform.platform.name);
-                      })}
-                    </div>
-                  )}
-                  {showDetails && value.id === current && (
-                    <div className="[ library__cardGenres ]">
-                      {value.genres.map((genre, index) => {
-                        return (
-                          <p className="[ library__cardGenres__p ]">
-                            {genre.name}
-                          </p>
-                        );
-                      })}
+                  {value.id === current && (
+                    <div className="[ library__secondaryDetails ]">
+                      {/*<div className="[ library__cardPlatforms ]">*/}
+                      {/*  {value.platforms.map((platform, index) => {*/}
+                      {/*    return platformIcon(platform.platform.name);*/}
+                      {/*  })}*/}
+                      {/*</div>*/}
+                      {/*<div className="[ library__cardGenres ]">*/}
+                      {/*  {value.genres.map((genre, index) => {*/}
+                      {/*    return (*/}
+                      {/*      <p className="[ library__cardGenres__p ]">*/}
+                      {/*        {genre.name}*/}
+                      {/*      </p>*/}
+                      {/*    );*/}
+                      {/*  })}*/}
+                      {/*</div>*/}
+                      <h3 className="[ library__cardRating ]">
+                        Release Date: {value.released} | Rating: {value.rating}{" "}
+                        / {value.rating_top}
+                      </h3>
                     </div>
                   )}
                 </div>
@@ -92,6 +151,27 @@ const Library = () => {
           })}
         </div>
       )}
+
+      {loadingImages && (
+        <div className="[ library__loading ]">loading images</div>
+      )}
+
+      <div className="[ library__controlContainer ]">
+        <div className="[ library__paginationControl ]">
+          <button
+            onClick={previousPage}
+            className="[ library__paginationControl__button ]"
+          >
+            Previous Page
+          </button>
+          <button
+            onClick={nextPage}
+            className="[ library__paginationControl__button ]"
+          >
+            Next Page
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
