@@ -36,7 +36,7 @@
 
 .library__paginationControl__button {
   color: white;
-  background-color: black;
+  background-color: #8a97a9;
   width: calc(50% - 5px);
   height: 45px;
   border: 0;
@@ -45,7 +45,6 @@
 
 .library__paginationControl__button:hover {
   cursor: pointer;
-  transform: scale(1.02);
 }
 
 .library__paginationControl__button:first-of-type {
@@ -60,30 +59,34 @@
   position: relative;
   width: 100%;
   height: 200px; //200px
-  display: flex;
   margin-bottom: 10px;
   color: white;
+  display: flex;
+  flex-direction: column;
   transition: height 250ms ease-in-out, margin-bottom 250ms ease-in-out, opacity 250ms ease-in-out;
 }
 
 .library__cardTitle {
   z-index: 10;
   line-height: 45px;
+  height: 45px;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-bottom: 0 solid rgba(255, 255, 255, 0);
+  transition: border-bottom-width 250ms ease-in-out, border-bottom-color 250ms ease-in-out;
 }
 
 .library__detailContainer {
-  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  background-color: #8a97a9;
   margin-top: auto;
   width: 100%;
   height: 45px;
   display: flex;
-  padding: 0 50px;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   overflow: hidden;
   transition: height 250ms ease-in-out;
@@ -108,21 +111,25 @@
 
 .library__cardImg {
   z-index: -1;
-  position: absolute;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 45px);
   object-fit: cover;
-}
-
-.library__secondaryDetails {
-  opacity: 0;
-  height: 0;
-  transition: opacity 250ms ease-in-out 250ms, height 250ms ease-in-out;
+  transition: height 250ms ease-in-out;
 }
 
 .library__cardRating {
-  margin: 5px;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.53);
+  display: flex;
+  justify-content: space-between;
+  opacity: 0;
+  line-height: 30px;
+  height: 0;
+  width: 100%;
+  margin: 0;
+  transition: opacity 250ms ease-in-out, height 250ms ease-in-out;
+}
+
+.library__released, .library__rating {
+  margin: 0 50px;
 }
 
 .library__openCard {
@@ -130,11 +137,79 @@
 }
 
 .library__showDetails {
-  height: 70px;
+  height: 90px;
 }
 
-.library__showDetails .library__secondaryDetails {
+.library__showDetails .library__cardRating {
   opacity: 1;
-  height: 45px;
+  height: 30px;
+}
+
+.library__showDetails .library__cardTitle {
+  border-bottom: 3px solid rgba(255, 255, 255, 1);
+}
+
+.library__openCard .library__cardImg {
+  height: calc(100% - 90px);
+}
+
+// LOADING.IO CSS
+.lds-ellipsis {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 33px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
 }
 

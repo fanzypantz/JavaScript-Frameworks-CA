@@ -36,6 +36,14 @@ const Library = () => {
     }
   };
 
+  const checkError = e => {
+    // If this function is ever called just display the content that is being loaded. It's only for images
+    if (e) {
+      console.log("error: ", e);
+    }
+    setloadingImages(false);
+  };
+
   const platformIcon = platform => {
     return (
       <img
@@ -48,9 +56,7 @@ const Library = () => {
 
   const handleHover = id => {
     setCurrent(id);
-    setTimeout(() => {
-      setShowDetails(true);
-    }, 250);
+    setShowDetails(true);
   };
 
   const handleLeave = () => {
@@ -109,6 +115,7 @@ const Library = () => {
                 ) : (
                   <img
                     onLoad={checkLoad}
+                    onError={checkError}
                     className="[ library__cardImg ]"
                     src={require("../images/image_not_found.jpg")}
                     alt=""
@@ -123,28 +130,17 @@ const Library = () => {
                   }
                 >
                   <h2 className="[ library__cardTitle ]">{value.name}</h2>
-                  {value.id === current && (
-                    <div className="[ library__secondaryDetails ]">
-                      {/*<div className="[ library__cardPlatforms ]">*/}
-                      {/*  {value.platforms.map((platform, index) => {*/}
-                      {/*    return platformIcon(platform.platform.name);*/}
-                      {/*  })}*/}
-                      {/*</div>*/}
-                      {/*<div className="[ library__cardGenres ]">*/}
-                      {/*  {value.genres.map((genre, index) => {*/}
-                      {/*    return (*/}
-                      {/*      <p className="[ library__cardGenres__p ]">*/}
-                      {/*        {genre.name}*/}
-                      {/*      </p>*/}
-                      {/*    );*/}
-                      {/*  })}*/}
-                      {/*</div>*/}
-                      <h3 className="[ library__cardRating ]">
-                        Release Date: {value.released} | Rating: {value.rating}{" "}
-                        / {value.rating_top}
-                      </h3>
-                    </div>
-                  )}
+                  <h3 className="[ library__cardRating ]">
+                    <p className="[ library__released ]">
+                      {value.released !== null
+                        ? "Release Date: " + value.released
+                        : "Not Released"}
+                    </p>
+                    <p className="[ library__rating ]">
+                      Rating: {Math.round(value.rating * 10) / 10} /{" "}
+                      {value.rating_top}
+                    </p>
+                  </h3>
                 </div>
               </Link>
             );
@@ -153,25 +149,33 @@ const Library = () => {
       )}
 
       {loadingImages && (
-        <div className="[ library__loading ]">loading images</div>
+        // From loading.io
+        <div className="[ lds-ellipsis ]">
+          <div />
+          <div />
+          <div />
+          <div />
+        </div>
       )}
 
-      <div className="[ library__controlContainer ]">
-        <div className="[ library__paginationControl ]">
-          <button
-            onClick={previousPage}
-            className="[ library__paginationControl__button ]"
-          >
-            Previous Page
-          </button>
-          <button
-            onClick={nextPage}
-            className="[ library__paginationControl__button ]"
-          >
-            Next Page
-          </button>
+      {!loadingImages && (
+        <div className="[ library__controlContainer ]">
+          <div className="[ library__paginationControl ]">
+            <button
+              onClick={previousPage}
+              className="[ library__paginationControl__button ]"
+            >
+              Previous Page
+            </button>
+            <button
+              onClick={nextPage}
+              className="[ library__paginationControl__button ]"
+            >
+              Next Page
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
