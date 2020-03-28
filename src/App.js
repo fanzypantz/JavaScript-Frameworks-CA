@@ -19,19 +19,23 @@ function App() {
   });
 
   useEffect(() => {
+    // console.log("history: ", history.action);
     setPageFade(false);
   }, []);
 
   const fetchPage = query => {
-    // The default page is 1, if it is not set by the library component
-    // This can be called from any component
+    // The default page is 1, if it is not set by the library component.
+    // This can be called from any component.
+    // This url query can be expanded upon with plenty of features like ordering,
+    // dynamic page size etc.
     let url = query
       ? query
       : `https://api.rawg.io/api/games?page=${
           filters.page === null ? 1 : filters.page
         }&ordering=${filters.ordering}&page_size=${filters.page_size}`;
-    console.log("url: ", url);
     axios.get(url).then(response => {
+      console.log("url: ", url);
+      console.log("filters: ", filters);
       setGameData(response.data);
     });
   };
@@ -43,7 +47,7 @@ function App() {
         gameData: gameData,
         fetchPage: fetchPage,
         filters: filters,
-        setFilters: setFilters
+        setNewFilter: setFilters
       }}
     >
       <div
@@ -51,7 +55,7 @@ function App() {
       />
       <Router>
         <Switch>
-          <Route path={"/game/:id"}>
+          <Route path={"/game"}>
             <Game />
           </Route>
           <Route path={"/:page"}>

@@ -15,12 +15,16 @@ const Library = props => {
 
   let imageCount = 0;
 
+  const setNewFilter = (key, value) => {
+    let filters = context.filters;
+    filters[key] = value;
+    context.setNewFilter(filters);
+  };
+
   useEffect(() => {
     if (page) {
       // Set the correct page before you fetch the data
-      let filters = context.filters;
-      filters.page = page;
-      context.setFilters(filters);
+      setNewFilter("page", page);
       context.fetchPage();
     } else {
       context.fetchPage();
@@ -28,16 +32,22 @@ const Library = props => {
   }, []);
 
   const previousPage = () => {
-    if (context.gameData.previous !== null) {
+    if (
+      !loadingImages &&
+      context.gameData.previous !== null &&
+      parseInt(page) - 1 > 0
+    ) {
       history.push(`/${parseInt(page) - 1}`);
+      setNewFilter("page", parseInt(page) - 1);
       setLoadingImages(true);
       context.fetchPage(context.gameData.previous);
     }
   };
 
   const nextPage = () => {
-    if (context.gameData.next !== null) {
+    if (!loadingImages && context.gameData.next !== null) {
       history.push(`/${parseInt(page) + 1}`);
+      setNewFilter("page", parseInt(page) + 1);
       setLoadingImages(true);
       context.fetchPage(context.gameData.next);
     }
@@ -62,8 +72,8 @@ const Library = props => {
     e.preventDefault();
     context.setPageFade(true);
     setTimeout(() => {
+      // If clicked manually send the user to the URL instead of using the Link element
       history.push(to);
-      console.log("to: ", to);
     }, 1000);
   };
 
@@ -106,8 +116,13 @@ const Library = props => {
           {context.gameData.results.map((value, index) => {
             return (
               <a
-                onClick={e => handleClick(e, `/game/${value.id}`)}
-                href={`/game/${value.id}`}
+                onClick={e =>
+                  handleClick(e, {
+                    pathname: "/game",
+                    search: `?id=${value.id}&page=${context.filters.page}`
+                  })
+                }
+                href={`/game?id=${value.id}&page=${context.filters.page}`}
                 onMouseEnter={() => handleHover(value.id)}
                 onMouseLeave={handleLeave}
                 key={index}
