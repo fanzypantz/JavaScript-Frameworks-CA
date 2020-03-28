@@ -64,6 +64,10 @@
   display: flex;
   flex-direction: column;
   transition: height 250ms ease-in-out, margin-bottom 250ms ease-in-out, opacity 250ms ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .library__cardTitle {
@@ -74,8 +78,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-bottom: 0 solid rgba(255, 255, 255, 0);
-  transition: border-bottom-width 250ms ease-in-out, border-bottom-color 250ms ease-in-out;
 }
 
 .library__detailContainer {
@@ -121,11 +123,12 @@
   display: flex;
   justify-content: space-between;
   opacity: 0;
-  line-height: 30px;
+  line-height: 42px;
   height: 0;
   width: 100%;
   margin: 0;
-  transition: opacity 250ms ease-in-out, height 250ms ease-in-out;
+  transition: opacity 250ms ease-in-out, height 250ms ease-in-out, border-top-width 250ms ease-in-out, border-top-color 250ms ease-in-out;
+  border-top: 0 solid rgba(255, 255, 255, 0);
 }
 
 .library__released, .library__rating {
@@ -142,11 +145,9 @@
 
 .library__showDetails .library__cardRating {
   opacity: 1;
-  height: 30px;
-}
+  height: 42px;
 
-.library__showDetails .library__cardTitle {
-  border-bottom: 3px solid rgba(255, 255, 255, 1);
+  border-top: 3px solid rgba(255, 255, 255, 1);
 }
 
 .library__openCard .library__cardImg {

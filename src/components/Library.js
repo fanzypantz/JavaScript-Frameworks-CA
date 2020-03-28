@@ -1,27 +1,28 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import GameContext from "../context/GameContext";
 import "../css/Home.scss";
 
-const Library = () => {
+const Library = props => {
   const context = useContext(GameContext);
+  const history = useHistory();
 
   const [showDetails, setShowDetails] = useState(false);
   const [current, setCurrent] = useState(null);
-  const [loadingImages, setloadingImages] = useState(true);
+  const [loadingImages, setLoadingImages] = useState(true);
 
   let imageCount = 0;
 
   const previousPage = () => {
     if (context.gameData.previous !== null) {
-      setloadingImages(true);
+      setLoadingImages(true);
       context.fetchPage(context.gameData.previous);
     }
   };
 
   const nextPage = () => {
     if (context.gameData.next !== null) {
-      setloadingImages(true);
+      setLoadingImages(true);
 
       context.fetchPage(context.gameData.next);
     }
@@ -32,16 +33,16 @@ const Library = () => {
   const checkLoad = () => {
     imageCount++;
     if (imageCount === context.filters.page_size) {
-      setloadingImages(false);
+      setLoadingImages(false);
     }
   };
 
   const checkError = e => {
-    // If this function is ever called just display the content that is being loaded. It's only for images
+    // If this function is ever called just display the content that is being loaded regardless of loading state
     if (e) {
       console.log("error: ", e);
     }
-    setloadingImages(false);
+    setLoadingImages(false);
   };
 
   const platformIcon = platform => {
@@ -52,6 +53,15 @@ const Library = () => {
         alt={platform}
       />
     );
+  };
+
+  const handleClick = (e, to) => {
+    e.preventDefault();
+    context.setPageFade(true);
+    setTimeout(() => {
+      history.push(to);
+      console.log("to: ", to);
+    }, 1000);
   };
 
   const handleHover = id => {
@@ -92,13 +102,11 @@ const Library = () => {
         >
           {context.gameData.results.map((value, index) => {
             return (
-              <Link
+              <a
+                onClick={e => handleClick(e, `/game/${value.id}`)}
+                href={`/game/${value.id}`}
                 onMouseEnter={() => handleHover(value.id)}
                 onMouseLeave={handleLeave}
-                to={{
-                  pathname: "/game",
-                  search: `?id=${value.id}`
-                }}
                 key={index}
                 className={
                   "[ library__card ]" +
@@ -142,7 +150,7 @@ const Library = () => {
                     </p>
                   </h3>
                 </div>
-              </Link>
+              </a>
             );
           })}
         </div>
