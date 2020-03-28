@@ -1,9 +1,11 @@
-import React, { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import GameContext from "../context/GameContext";
 import "../css/Home.scss";
 
 const Library = props => {
+  // This component could probably be split up a bit, but probably require some refactoring
+  const { page } = useParams();
   const context = useContext(GameContext);
   const history = useHistory();
 
@@ -13,8 +15,21 @@ const Library = props => {
 
   let imageCount = 0;
 
+  useEffect(() => {
+    if (page) {
+      // Set the correct page before you fetch the data
+      let filters = context.filters;
+      filters.page = page;
+      context.setFilters(filters);
+      context.fetchPage();
+    } else {
+      context.fetchPage();
+    }
+  }, []);
+
   const previousPage = () => {
     if (context.gameData.previous !== null) {
+      history.push(`/${parseInt(page) - 1}`);
       setLoadingImages(true);
       context.fetchPage(context.gameData.previous);
     }
@@ -22,13 +37,11 @@ const Library = props => {
 
   const nextPage = () => {
     if (context.gameData.next !== null) {
+      history.push(`/${parseInt(page) + 1}`);
       setLoadingImages(true);
-
       context.fetchPage(context.gameData.next);
     }
   };
-
-  const changeFilter = () => {};
 
   const checkLoad = () => {
     imageCount++;
@@ -43,16 +56,6 @@ const Library = props => {
       console.log("error: ", e);
     }
     setLoadingImages(false);
-  };
-
-  const platformIcon = platform => {
-    return (
-      <img
-        className="[ library__platformIcon ]"
-        src={require(`../images/${platform}.png`)}
-        alt={platform}
-      />
-    );
   };
 
   const handleClick = (e, to) => {
