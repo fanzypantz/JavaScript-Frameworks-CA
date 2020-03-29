@@ -1,0 +1,65 @@
+.game {
+  width: 100%;
+  min-height: calc(100vh - 50px);
+  position: relative;
+}
+
+.game__backgroundImage {
+  z-index: -100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+}
+
+.game__container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(75, 82, 93, 0.9);
+  color: white;
+  padding: 40px;
+
+  h1 {
+    margin-top: 0;
+  }
+}
+
+.game__cross{
+  position: absolute;
+  right: 5%;
+  top: 5%;
+  filter: invert(1);
+  width: 50px;
+  transition: transform 250ms ease;
+  transform-origin: center;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+  }
+}
+
+.game__cardGenres{
+  display: flex;
+}
+
+.game__platforms{
+  display: flex;
+
+  p {
+    margin: 0 10px 0 0;
+  }
+}
+
+.game__cardGenre {
+  margin-left: 10px;
+}
+
+.game__description {
+  margin-bottom: 20px;
+}

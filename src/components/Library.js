@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import GameContext from "../context/GameContext";
-import "../css/Home.scss";
+import "../css/Library.scss";
 
 const Library = props => {
   // This component could probably be split up a bit, but probably require some refactoring
@@ -9,6 +9,7 @@ const Library = props => {
   const context = useContext(GameContext);
   const history = useHistory();
 
+  // State
   const [showDetails, setShowDetails] = useState(false);
   const [current, setCurrent] = useState(null);
   const [loadingImages, setLoadingImages] = useState(true);
@@ -27,8 +28,10 @@ const Library = props => {
       setNewFilter("page", page);
       context.fetchPage();
     } else {
+      setNewFilter("page", 1);
       context.fetchPage();
     }
+    context.setPageFade(false);
   }, []);
 
   const previousPage = () => {
@@ -46,8 +49,13 @@ const Library = props => {
 
   const nextPage = () => {
     if (!loadingImages && context.gameData.next !== null) {
-      history.push(`/${parseInt(page) + 1}`);
-      setNewFilter("page", parseInt(page) + 1);
+      if (page === undefined) {
+        history.push(`/${context.filters.page + 1}`);
+        setNewFilter("page", context.filters.page + 1);
+      } else {
+        history.push(`/${parseInt(page) + 1}`);
+        setNewFilter("page", parseInt(page) + 1);
+      }
       setLoadingImages(true);
       context.fetchPage(context.gameData.next);
     }
@@ -131,22 +139,17 @@ const Library = props => {
                   (value.id === current ? "[ library__openCard ]" : "")
                 }
               >
-                {value.background_image !== null ? (
-                  <img
-                    onLoad={checkLoad}
-                    className="[ library__cardImg ]"
-                    src={value.background_image}
-                    alt=""
-                  />
-                ) : (
-                  <img
-                    onLoad={checkLoad}
-                    onError={checkError}
-                    className="[ library__cardImg ]"
-                    src={require("../images/image_not_found.jpg")}
-                    alt=""
-                  />
-                )}
+                <img
+                  onLoad={checkLoad}
+                  onError={checkError}
+                  className="[ library__cardImg ]"
+                  src={
+                    value.background_image !== null
+                      ? value.background_image
+                      : require("../images/image_not_found.jpg")
+                  }
+                  alt=""
+                />
                 <div
                   className={
                     "[ library__detailContainer ]" +

@@ -8,6 +8,8 @@ import "./App.scss";
 import { GameProvider } from "./context/GameContext";
 import Library from "./components/Library";
 import Game from "./components/Game";
+import Contact from "./components/Contact";
+import Menu from "./components/Menu";
 
 function App() {
   const [pageFade, setPageFade] = useState(true);
@@ -20,7 +22,6 @@ function App() {
 
   useEffect(() => {
     // console.log("history: ", history.action);
-    setPageFade(false);
   }, []);
 
   const fetchPage = query => {
@@ -34,8 +35,6 @@ function App() {
           filters.page === null ? 1 : filters.page
         }&ordering=${filters.ordering}&page_size=${filters.page_size}`;
     axios.get(url).then(response => {
-      console.log("url: ", url);
-      console.log("filters: ", filters);
       setGameData(response.data);
     });
   };
@@ -54,7 +53,11 @@ function App() {
         className={"[ pageFade ]" + (pageFade ? "[ pageFade__anim ]" : "")}
       />
       <Router>
+        <Menu />
         <Switch>
+          <Route path={"/contact"}>
+            <Contact />
+          </Route>
           <Route path={"/game"}>
             <Game />
           </Route>

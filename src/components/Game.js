@@ -1,45 +1,107 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import GameContext from "../context/GameContext";
+import "../css/Game.scss";
+import axios from "axios";
 
 const Game = ({ location }) => {
   const context = useContext(GameContext);
   const params = new URLSearchParams(useLocation().search);
+  const history = useHistory();
+
+  // State
+  const [game, setGame] = useState(null);
 
   useEffect(() => {
     let filters = context.filters;
-    console.log("page: ", params.get("page"));
     filters.page = params.get("page");
-    context.setFilters(filters);
-    context.fetchPage();
+    context.setNewFilter(filters);
+    fetchGame(params.get("id"));
     context.setPageFade(false);
     // setGame(context.gameData.results.find(game => game.id === id));
   }, []);
 
-  const platformIcon = platform => {
-    return (
-      <img
-        className="[ library__platformIcon ]"
-        src={require(`../images/${platform}.png`)}
-        alt={platform}
-      />
-    );
+  const fetchGame = id => {
+    let url = `https://api.rawg.io/api/games/${id}`;
+    axios.get(url).then(response => {
+      setGame(response.data);
+    });
+  };
+
+  const goBack = () => {
+    context.setPageFade(true);
+    setTimeout(() => {
+      history.push(`/${parseInt(params.get("page"))}`);
+    }, 1000);
   };
 
   const gameData = () => {
-    const game = context.gameData.results.find(
-      game => game.id === parseInt(params.get("id"))
-    );
     console.log("game: ", game);
-    return <div>{game.name}</div>;
+    return (
+      <div className="[ game ]">
+        <img
+          className="[ game__backgroundImage ]"
+          src={
+            game.background_image !== null
+              ? game.background_image
+              : require("../images/image_not_found.jpg")
+          }
+          alt=""
+        />
+        <div className="[ game__container ]">
+          <img
+            onClick={goBack}
+            className="[ game__cross ]"
+            src={require("../images/cross.png")}
+            alt=""
+          />
+          <h1>{game.name}</h1>
+          <p className="[ game__rating ]">
+            Rating: {Math.round(game.rating * 10) / 10} / {game.rating_top}
+          </p>
+          <p className="[ game__released ]">
+            {game.released !== null
+              ? "Release Date: " + game.released
+              : "Not Released"}
+          </p>
+          <div className="[ game__description ]">
+            {game.description.replace(/(<([^>]+)>)/gi, "")}
+          </div>
+
+          <div className="[ game__platforms ]">
+            <p>Platforms: </p>
+            {game.platforms.map((platform, index) => {
+              return (
+                <img
+                  key={index}
+                  className="[ library__platformIcon ]"
+                  src={require(`../images/${platform.platform.name}.png`)}
+                  alt={platform}
+                />
+              );
+            })}
+          </div>
+
+          <div className="[ game__cardGenres ]">
+            <p>Genres: </p>
+            {game.genres.map((genre, index) => {
+              return (
+                <p key={index} className="[ game__cardGenre ]">
+                  {genre.name}
+                </p>
+              );
+            })}
+          </div>
+
+          <a target="_blank" href={game.website}>
+            Go to Website
+          </a>
+        </div>
+      </div>
+    );
   };
 
-  return (
-    <div>
-      <h1>Game </h1>
-      {context.gameData !== null && <div>{gameData()}</div>}
-    </div>
-  );
+  return <div>{game !== null && <div>{gameData()}</div>}</div>;
 };
 
 export default Game;
