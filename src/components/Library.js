@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import GameContext from "../context/GameContext";
+import Pagination from "../components/Pagination";
 import "../css/Library.scss";
+import axios from "axios";
 
 const Library = props => {
   // This component could probably be split up a bit, but probably require some refactoring
@@ -13,57 +15,51 @@ const Library = props => {
   const [showDetails, setShowDetails] = useState(false);
   const [current, setCurrent] = useState(null);
   const [loadingImages, setLoadingImages] = useState(true);
+  const [gameData, setGameData] = useState(null);
+  const [filters, setFilters] = useState({
+    page: null,
+    page_size: 25,
+    ordering: "-rating"
+  });
 
   let imageCount = 0;
-
-  const setNewFilter = (key, value) => {
-    let filters = context.filters;
-    filters[key] = value;
-    context.setNewFilter(filters);
-  };
 
   useEffect(() => {
     if (page) {
       // Set the correct page before you fetch the data
       setNewFilter("page", page);
-      context.fetchPage();
+      fetchPage();
     } else {
       setNewFilter("page", 1);
-      context.fetchPage();
+      fetchPage();
     }
     context.setPageFade(false);
   }, []);
 
-  const previousPage = () => {
-    if (
-      !loadingImages &&
-      context.gameData.previous !== null &&
-      parseInt(page) - 1 > 0
-    ) {
-      history.push(`/${parseInt(page) - 1}`);
-      setNewFilter("page", parseInt(page) - 1);
-      setLoadingImages(true);
-      context.fetchPage(context.gameData.previous);
-    }
+  const setNewFilter = (key, value) => {
+    let newFilters = filters;
+    newFilters[key] = value;
+    setFilters(newFilters);
   };
 
-  const nextPage = () => {
-    if (!loadingImages && context.gameData.next !== null) {
-      if (page === undefined) {
-        history.push(`/${context.filters.page + 1}`);
-        setNewFilter("page", context.filters.page + 1);
-      } else {
-        history.push(`/${parseInt(page) + 1}`);
-        setNewFilter("page", parseInt(page) + 1);
-      }
-      setLoadingImages(true);
-      context.fetchPage(context.gameData.next);
-    }
+  const fetchPage = query => {
+    // The default page is 1, if it is not set by the library component.
+    // This can be called from any component.
+    // This url query can be expanded upon with plenty of features like ordering,
+    // dynamic page size etc.
+    let url = query
+      ? query
+      : `https://api.rawg.io/api/games?page=${
+          filters.page === null ? 1 : filters.page
+        }&ordering=${filters.ordering}&page_size=${filters.page_size}`;
+    axios.get(url).then(response => {
+      setGameData(response.data);
+    });
   };
 
   const checkLoad = () => {
     imageCount++;
-    if (imageCount === context.filters.page_size) {
+    if (imageCount === filters.page_size) {
       setLoadingImages(false);
     }
   };
@@ -97,52 +93,45 @@ const Library = props => {
 
   return (
     <div className="[ library ]">
-      <div className="[ library__controlContainer ]">
-        <div className="[ library__paginationControl ]">
-          <button
-            onClick={previousPage}
-            className="[ library__paginationControl__button ]"
-          >
-            Previous Page
-          </button>
-          <button
-            onClick={nextPage}
-            className="[ library__paginationControl__button ]"
-          >
-            Next Page
-          </button>
-        </div>
-      </div>
+      <Pagination
+        page={page}
+        gameData={gameData}
+        loadingImages={loadingImages}
+        setLoadingImages={setLoadingImages}
+        filters={filters}
+        setNewFilter={setNewFilter}
+        fetchPage={fetchPage}
+      />
 
-      {context.gameData !== null && (
+      {gameData !== null && (
         <div
           className={
-            "[ library__container ]" +
-            (loadingImages ? "[ library__loadingImages ]" : "")
+            "library__container" +
+            (loadingImages ? " library__loadingImages" : "")
           }
         >
-          {context.gameData.results.map((value, index) => {
+          {gameData.results.map((value, index) => {
             return (
               <a
                 onClick={e =>
                   handleClick(e, {
                     pathname: "/game",
-                    search: `?id=${value.id}&page=${context.filters.page}`
+                    search: `?id=${value.id}&page=${filters.page}`
                   })
                 }
-                href={`/game?id=${value.id}&page=${context.filters.page}`}
+                href={`/game?id=${value.id}&page=${filters.page}`}
                 onMouseEnter={() => handleHover(value.id)}
                 onMouseLeave={handleLeave}
                 key={index}
                 className={
-                  "[ library__card ]" +
-                  (value.id === current ? "[ library__openCard ]" : "")
+                  "library__card" +
+                  (value.id === current ? " library__openCard" : "")
                 }
               >
                 <img
                   onLoad={checkLoad}
                   onError={checkError}
-                  className="[ library__cardImg ]"
+                  className={"library__cardImg"}
                   src={
                     value.background_image !== null
                       ? value.background_image
@@ -152,20 +141,20 @@ const Library = props => {
                 />
                 <div
                   className={
-                    "[ library__detailContainer ]" +
+                    "library__detailContainer" +
                     (value.id === current && showDetails
-                      ? "[ library__showDetails ]"
+                      ? " library__showDetails"
                       : "")
                   }
                 >
-                  <h2 className="[ library__cardTitle ]">{value.name}</h2>
-                  <h3 className="[ library__cardRating ]">
-                    <p className="[ library__released ]">
+                  <h2 className={"library__cardTitle"}>{value.name}</h2>
+                  <h3 className={"library__cardRating"}>
+                    <p className={"library__released"}>
                       {value.released !== null
                         ? "Release Date: " + value.released
                         : "Not Released"}
                     </p>
-                    <p className="[ library__rating ]">
+                    <p className={"library__rating"}>
                       Rating: {Math.round(value.rating * 10) / 10} /{" "}
                       {value.rating_top}
                     </p>
@@ -179,7 +168,7 @@ const Library = props => {
 
       {loadingImages && (
         // From loading.io
-        <div className="[ lds-ellipsis ]">
+        <div className={"lds-ellipsis"}>
           <div />
           <div />
           <div />
@@ -188,22 +177,15 @@ const Library = props => {
       )}
 
       {!loadingImages && (
-        <div className="[ library__controlContainer ]">
-          <div className="[ library__paginationControl ]">
-            <button
-              onClick={previousPage}
-              className="[ library__paginationControl__button ]"
-            >
-              Previous Page
-            </button>
-            <button
-              onClick={nextPage}
-              className="[ library__paginationControl__button ]"
-            >
-              Next Page
-            </button>
-          </div>
-        </div>
+        <Pagination
+          page={page}
+          gameData={gameData}
+          loadingImages={loadingImages}
+          setLoadingImages={setLoadingImages}
+          filters={filters}
+          setNewFilter={setNewFilter}
+          fetchPage={fetchPage}
+        />
       )}
     </div>
   );

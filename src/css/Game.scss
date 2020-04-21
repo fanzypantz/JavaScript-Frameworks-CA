@@ -63,3 +63,18 @@
 .game__description {
   margin-bottom: 20px;
 }
+
+.game__website-link {
+  display: block;
+  background-color: #8a97a9;
+  color: white;
+  height: 40px;
+  line-height: 40px;
+  width: 200px;
+  text-align: center;
+
+  &:hover {
+    background-color: white;
+    color: #4b525d;
+  }
+}

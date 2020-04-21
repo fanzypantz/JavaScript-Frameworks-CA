@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import GameContext from "../context/GameContext";
+import Platforms from "../components/Platforms";
+import Genres from "../components/Genres";
 import "../css/Game.scss";
 import axios from "axios";
 
@@ -13,9 +15,6 @@ const Game = ({ location }) => {
   const [game, setGame] = useState(null);
 
   useEffect(() => {
-    let filters = context.filters;
-    filters.page = params.get("page");
-    context.setNewFilter(filters);
     fetchGame(params.get("id"));
     context.setPageFade(false);
     // setGame(context.gameData.results.find(game => game.id === id));
@@ -38,9 +37,9 @@ const Game = ({ location }) => {
   const gameData = () => {
     console.log("game: ", game);
     return (
-      <div className="[ game ]">
+      <div className={"game"}>
         <img
-          className="[ game__backgroundImage ]"
+          className={"game__backgroundImage"}
           src={
             game.background_image !== null
               ? game.background_image
@@ -48,52 +47,34 @@ const Game = ({ location }) => {
           }
           alt=""
         />
-        <div className="[ game__container ]">
+        <div className={"game__container"}>
           <img
             onClick={goBack}
-            className="[ game__cross ]"
+            className={"game__cross"}
             src={require("../images/cross.png")}
             alt=""
           />
           <h1>{game.name}</h1>
-          <p className="[ game__rating ]">
+          <p className={"game__rating"}>
             Rating: {Math.round(game.rating * 10) / 10} / {game.rating_top}
           </p>
-          <p className="[ game__released ]">
+          <p className={"game__released"}>
             {game.released !== null
               ? "Release Date: " + game.released
               : "Not Released"}
           </p>
-          <div className="[ game__description ]">
+          <div className={"game__description"}>
             {game.description.replace(/(<([^>]+)>)/gi, "")}
           </div>
 
-          <div className="[ game__platforms ]">
-            <p>Platforms: </p>
-            {game.platforms.map((platform, index) => {
-              return (
-                <img
-                  key={index}
-                  className="[ library__platformIcon ]"
-                  src={require(`../images/${platform.platform.name}.png`)}
-                  alt={platform}
-                />
-              );
-            })}
-          </div>
+          <Platforms platforms={game.platforms} />
+          <Genres genres={game.genres} />
 
-          <div className="[ game__cardGenres ]">
-            <p>Genres: </p>
-            {game.genres.map((genre, index) => {
-              return (
-                <p key={index} className="[ game__cardGenre ]">
-                  {genre.name}
-                </p>
-              );
-            })}
-          </div>
-
-          <a target="_blank" href={game.website}>
+          <a
+            className={"game__website-link"}
+            target="_blank"
+            href={game.website}
+          >
             Go to Website
           </a>
         </div>
