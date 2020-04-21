@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
-import GameContext from "../context/GameContext";
-import Platforms from "../components/Platforms";
-import Genres from "../components/Genres";
-import "../css/Game.scss";
+import GameContext from "../../context/GameContext";
+import Platforms from "./Platforms";
+import Genres from "./Genres";
+import "../../css/Game.scss";
 import axios from "axios";
 
 const Game = ({ location }) => {
@@ -43,7 +43,7 @@ const Game = ({ location }) => {
           src={
             game.background_image !== null
               ? game.background_image
-              : require("../images/image_not_found.jpg")
+              : require("../../images/image_not_found.jpg")
           }
           alt=""
         />
@@ -51,25 +51,28 @@ const Game = ({ location }) => {
           <img
             onClick={goBack}
             className={"game__cross"}
-            src={require("../images/cross.png")}
+            src={require("../../images/cross.png")}
             alt=""
           />
           <h1>{game.name}</h1>
+          <hr />
           <p className={"game__rating"}>
             Rating: {Math.round(game.rating * 10) / 10} / {game.rating_top}
           </p>
+          <hr />
           <p className={"game__released"}>
             {game.released !== null
               ? "Release Date: " + game.released
               : "Not Released"}
           </p>
+          <hr />
           <div className={"game__description"}>
             {game.description.replace(/(<([^>]+)>)/gi, "")}
           </div>
-
+          <hr />
           <Platforms platforms={game.platforms} />
+          <hr />
           <Genres genres={game.genres} />
-
           <a
             className={"game__website-link"}
             target="_blank"

@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import GameContext from "../context/GameContext";
 import Pagination from "../components/Pagination";
+import LoadingEllipsis from "./LoadingEllipsis";
 import "../css/Library.scss";
 import axios from "axios";
 
 const Library = props => {
-  // This component could probably be split up a bit, but probably require some refactoring
   const { page } = useParams();
   const context = useContext(GameContext);
+  const params = new URLSearchParams(useLocation().search);
   const history = useHistory();
 
   // State
@@ -25,6 +26,16 @@ const Library = props => {
   let imageCount = 0;
 
   useEffect(() => {
+    if (params.get("sortby")) {
+      let sorting = params.get("sortby").startsWith("-")
+        ? params.get("sortby").substr(1)
+        : params.get("sortby");
+      setNewFilter(
+        "ordering",
+        params.get("direction") === "ascending" ? sorting : "-" + sorting
+      );
+    }
+
     if (page) {
       // Set the correct page before you fetch the data
       setNewFilter("page", page);
@@ -47,6 +58,7 @@ const Library = props => {
     // This can be called from any component.
     // This url query can be expanded upon with plenty of features like ordering,
     // dynamic page size etc.
+    setLoadingImages(true);
     let url = query
       ? query
       : `https://api.rawg.io/api/games?page=${
@@ -92,17 +104,15 @@ const Library = props => {
   };
 
   return (
-    <div className="[ library ]">
+    <div className={"library"}>
       <Pagination
         page={page}
         gameData={gameData}
         loadingImages={loadingImages}
-        setLoadingImages={setLoadingImages}
         filters={filters}
         setNewFilter={setNewFilter}
         fetchPage={fetchPage}
       />
-
       {gameData !== null && (
         <div
           className={
@@ -116,7 +126,7 @@ const Library = props => {
                 onClick={e =>
                   handleClick(e, {
                     pathname: "/game",
-                    search: `?id=${value.id}&page=${filters.page}`
+                    search: `?id=${value.id}&page=${filters.page}&sortby=${filters.ordering}`
                   })
                 }
                 href={`/game?id=${value.id}&page=${filters.page}`}
@@ -165,27 +175,9 @@ const Library = props => {
           })}
         </div>
       )}
-
       {loadingImages && (
         // From loading.io
-        <div className={"lds-ellipsis"}>
-          <div />
-          <div />
-          <div />
-          <div />
-        </div>
-      )}
-
-      {!loadingImages && (
-        <Pagination
-          page={page}
-          gameData={gameData}
-          loadingImages={loadingImages}
-          setLoadingImages={setLoadingImages}
-          filters={filters}
-          setNewFilter={setNewFilter}
-          fetchPage={fetchPage}
-        />
+        <LoadingEllipsis />
       )}
     </div>
   );

@@ -8,8 +8,8 @@ const Platforms = props => {
         return (
           <img
             key={index}
-            className={"library__platformIcon"}
-            src={require(`../images/${platform.platform.name}.png`)}
+            className={"game__platformIcon"}
+            src={require(`../../images/${platform.platform.name}.png`)}
             alt={platform}
           />
         );

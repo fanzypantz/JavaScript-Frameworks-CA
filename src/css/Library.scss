@@ -1,5 +1,5 @@
 .library{
-  min-height: 100vh;
+  min-height: calc(100vh - 150px);
   margin: 50px auto;
   min-width: 730px;
   max-width: 900px;
@@ -25,8 +25,12 @@
 }
 
 .library__controlContainer {
-  height: 45px;
   margin: 10px 0 10px 0;
+}
+
+.select {
+  border-radius: 0;
+  margin-top: 0;
 }
 
 .library__paginationControl {
@@ -100,11 +104,6 @@
 
 .library__cardGenres {
   display: flex;
-}
-
-.library__platformIcon {
-  height: 30px;
-  margin-left: 5px;
 }
 
 .library__cardGenres__p{

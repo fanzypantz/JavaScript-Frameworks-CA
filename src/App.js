@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import axios from "axios";
 import "./App.scss";
 
 // Components
 import { GameProvider } from "./context/GameContext";
 import Library from "./components/Library";
-import Game from "./components/Game";
+import Game from "./components/games/Game";
 import Contact from "./components/Contact";
 import Menu from "./components/Menu";
 

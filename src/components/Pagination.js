@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 
 const Pagination = props => {
   const history = useHistory();
@@ -12,7 +12,6 @@ const Pagination = props => {
     ) {
       history.push(`/${parseInt(props.page) - 1}`);
       props.setNewFilter("page", parseInt(props.page) - 1);
-      props.setLoadingImages(true);
       props.fetchPage(props.gameData.previous);
     }
   };
@@ -26,13 +25,61 @@ const Pagination = props => {
         history.push(`/${parseInt(props.page) + 1}`);
         props.setNewFilter("page", parseInt(props.page) + 1);
       }
-      props.setLoadingImages(true);
       props.fetchPage(props.gameData.next);
     }
   };
 
+  const handleSorting = e => {
+    props.setNewFilter(
+      "ordering",
+      props.filters.ordering.startsWith("-")
+        ? "-" + e.target.value
+        : e.target.value
+    );
+    props.setNewFilter("page", 1);
+    history.push(`/1?sortby=${props.filters.ordering}`);
+    props.fetchPage();
+  };
+
+  const handleDirection = e => {
+    props.setNewFilter(
+      "ordering",
+      props.filters.ordering.startsWith("-")
+        ? props.filters.ordering.substr(1)
+        : props.filters.ordering
+    );
+    props.setNewFilter("page", 1);
+    history.push(`/1?sortby=${props.filters.ordering}`);
+    props.fetchPage();
+  };
+
   return (
     <div className={"library__controlContainer"}>
+      <select
+        onChange={handleSorting}
+        className={"select sorting"}
+        value={
+          props.filters.ordering.startsWith("-")
+            ? props.filters.ordering.substr(1)
+            : props.filters.ordering
+        }
+      >
+        <option value="name">Name</option>
+        <option value="released">Released</option>
+        <option value="added">Added</option>
+        <option value="created">Created</option>
+        <option value="rating">Rating</option>
+      </select>
+      <select
+        onChange={handleDirection}
+        className={"select direction"}
+        value={
+          props.filters.ordering.startsWith("-") ? "descending" : "ascending"
+        }
+      >
+        <option value="ascending">Ascending</option>
+        <option value="descending">Descending</option>
+      </select>
       <div className={"library__paginationControl"}>
         <button
           onClick={previousPage}
