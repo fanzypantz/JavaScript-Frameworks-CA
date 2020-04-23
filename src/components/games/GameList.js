@@ -126,7 +126,7 @@ export function GameList(props) {
   };
 
   return (
-    <div>
+    <div className={"library__main"}>
       <div
         className={
           "library__container" +

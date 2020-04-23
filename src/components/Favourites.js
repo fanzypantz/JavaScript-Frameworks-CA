@@ -30,13 +30,11 @@ const Favourites = props => {
     }
   };
 
-  return (
-    <div className={"library"}>
-      {favouriteList !== null && favouriteList.length > 0 && (
-        <div>{renderGameList()}</div>
-      )}
-    </div>
-  );
+  if (favouriteList !== null && favouriteList.length > 0) {
+    return <div className={"library"}>{renderGameList()}</div>;
+  } else {
+    return null;
+  }
 };
 
 export default Favourites;
