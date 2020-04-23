@@ -28,6 +28,26 @@
   margin: 10px 0 10px 0;
 }
 
+.library__star {
+  z-index: 99;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+
+  path {
+    fill: #8a97a9;
+  }
+}
+
+.library__fav{
+
+  path {
+    fill: yellow;
+  }
+}
+
 .select {
   background-color: #8a97a9;
   border: none;

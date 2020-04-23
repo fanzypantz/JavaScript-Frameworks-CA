@@ -13,7 +13,7 @@ const Pagination = props => {
       parseInt(props.page) - 1 > 0
     ) {
       history.push(`/${parseInt(props.page) - 1}`);
-      props.setNewFilter("page", parseInt(props.page) - 1);
+      context.setNewFilter("page", parseInt(props.page) - 1);
       props.fetchPage(props.gameData.previous);
     }
   };
@@ -21,37 +21,37 @@ const Pagination = props => {
   const nextPage = () => {
     if (!context.loadingImages && props.gameData.next !== null) {
       if (props.page === undefined) {
-        history.push(`/${props.filters.page + 1}`);
-        props.setNewFilter("page", props.filters.page + 1);
+        history.push(`/${context.filters.page + 1}`);
+        context.setNewFilter("page", context.filters.page + 1);
       } else {
         history.push(`/${parseInt(props.page) + 1}`);
-        props.setNewFilter("page", parseInt(props.page) + 1);
+        context.setNewFilter("page", parseInt(props.page) + 1);
       }
       props.fetchPage(props.gameData.next);
     }
   };
 
   const handleSorting = e => {
-    props.setNewFilter(
+    context.setNewFilter(
       "ordering",
-      props.filters.ordering.startsWith("-")
+      context.filters.ordering.startsWith("-")
         ? "-" + e.target.value
         : e.target.value
     );
-    props.setNewFilter("page", 1);
-    history.push(`/1?sortby=${props.filters.ordering}`);
+    context.setNewFilter("page", 1);
+    history.push(`/1?sortby=${context.filters.ordering}`);
     props.fetchPage();
   };
 
   const handleDirection = e => {
-    props.setNewFilter(
+    context.setNewFilter(
       "ordering",
-      props.filters.ordering.startsWith("-")
-        ? props.filters.ordering.substr(1)
-        : props.filters.ordering
+      context.filters.ordering.startsWith("-")
+        ? context.filters.ordering.substr(1)
+        : context.filters.ordering
     );
-    props.setNewFilter("page", 1);
-    history.push(`/1?sortby=${props.filters.ordering}`);
+    context.setNewFilter("page", 1);
+    history.push(`/1?sortby=${context.filters.ordering}`);
     props.fetchPage();
   };
 
@@ -61,9 +61,9 @@ const Pagination = props => {
         onChange={handleSorting}
         className={"select sorting"}
         value={
-          props.filters.ordering.startsWith("-")
-            ? props.filters.ordering.substr(1)
-            : props.filters.ordering
+          context.filters.ordering.startsWith("-")
+            ? context.filters.ordering.substr(1)
+            : context.filters.ordering
         }
       >
         <option value="name">Name</option>
@@ -76,7 +76,7 @@ const Pagination = props => {
         onChange={handleDirection}
         className={"select direction"}
         value={
-          props.filters.ordering.startsWith("-") ? "descending" : "ascending"
+          context.filters.ordering.startsWith("-") ? "descending" : "ascending"
         }
       >
         <option value="ascending">Ascending</option>

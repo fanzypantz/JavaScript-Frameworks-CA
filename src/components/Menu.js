@@ -10,6 +10,9 @@ const Menu = () => {
       <Link className={"nav__navItem"} to="/contact">
         Contact
       </Link>
+      <Link className={"nav__navItem"} to="/favourites">
+        Favourites
+      </Link>
     </nav>
   );
 };

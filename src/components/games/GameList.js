@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import LoadingEllipsis from "./LoadingEllipsis";
-import GameContext from "../context/GameContext";
+import LoadingEllipsis from "../LoadingEllipsis";
+import GameContext from "../../context/GameContext";
 import { useHistory } from "react-router-dom";
 
 export function GameList(props) {
@@ -10,20 +10,22 @@ export function GameList(props) {
   const [games, setGames] = useState(props.games);
   const [showDetails, setShowDetails] = useState(false);
   const [current, setCurrent] = useState(null);
+  const [favourites, setFavourites] = useState(null);
 
+  // Used to hide the list when loading the images
   let imageCount = 0;
-  console.log("imageCount: ", imageCount);
 
   useEffect(() => {
     // If the property has changed, rerender the list
     if (props.games !== games) {
       setGames(props.games);
     }
+    setFavourites(getFavourites());
   }, [props.games]);
 
   const checkLoad = () => {
     imageCount++;
-    if (imageCount === props.filters.page_size) {
+    if (imageCount === context.filters.page_size || !props.usePageSize) {
       context.setLoadingImages(false);
     }
   };
@@ -55,6 +57,74 @@ export function GameList(props) {
     setShowDetails(false);
   };
 
+  const handleFavourites = (e, game) => {
+    e.stopPropagation();
+    let oldFav = localStorage.getItem("favourites");
+    if (oldFav !== null) {
+      oldFav = JSON.parse(oldFav);
+      if (oldFav.filter(item => item.id === game.id).length) {
+        // Remove if existing
+        oldFav = oldFav.filter(item => item.id !== game.id);
+        // Remove it from the state
+        setFavourites(favourites.filter(item => item.id !== game.id));
+      } else {
+        // Add if does not exist
+        oldFav.push({
+          id: game.id,
+          background_image: game.background_image,
+          released: game.released,
+          name: game.name,
+          rating: game.rating,
+          rating_top: game.rating_top
+        });
+      }
+      localStorage.setItem("favourites", JSON.stringify(oldFav));
+      setFavourites(getFavourites());
+      if ("updateFavourites" in props) {
+        props.updateFavourites();
+      }
+    } else {
+      // Create the new array if array is nonexistent
+      let newFav = [];
+      newFav.push({
+        id: game.id,
+        background_image: game.background_image,
+        released: game.released,
+        name: game.name,
+        rating: game.rating,
+        rating_top: game.rating_top
+      });
+      localStorage.setItem("favourites", JSON.stringify(newFav));
+      setFavourites(getFavourites());
+    }
+  };
+
+  const getFavourites = () => {
+    let oldFav = localStorage.getItem("favourites");
+    if (oldFav !== null) {
+      oldFav = JSON.parse(oldFav);
+      if (oldFav.length > 0) {
+        let favs = [];
+        for (let i = 0; i < oldFav.length; i++) {
+          favs.push(oldFav[i].id);
+        }
+        return favs;
+      }
+    } else {
+      return null;
+    }
+  };
+
+  const checkIfFavourite = id => {
+    if (favourites !== null && favourites !== undefined) {
+      if (favourites.length > 0) {
+        return !!favourites.includes(id);
+      }
+    } else {
+      return false;
+    }
+  };
+
   return (
     <div>
       <div
@@ -65,14 +135,13 @@ export function GameList(props) {
       >
         {games.map((value, index) => {
           return (
-            <a
+            <div
               onClick={e =>
                 handleClick(e, {
                   pathname: "/game",
-                  search: `?id=${value.id}&page=${props.filters.page}&sortby=${props.filters.ordering}`
+                  search: `?id=${value.id}&page=${context.filters.page}&sortby=${context.filters.ordering}`
                 })
               }
-              href={`/game?id=${value.id}&page=${props.filters.page}`}
               onMouseEnter={() => handleHover(value.id)}
               onMouseLeave={handleLeave}
               key={index}
@@ -81,6 +150,23 @@ export function GameList(props) {
                 (value.id === current ? " library__openCard" : "")
               }
             >
+              <svg
+                onClick={e => handleFavourites(e, value)}
+                className={
+                  "library__star" +
+                  (checkIfFavourite(value.id) ? " library__fav" : "")
+                }
+                height="21px"
+                version="1.1"
+                viewBox="0 0 20 21"
+                width="20px"
+              >
+                <title>Click to add to favourites!</title>
+                <path
+                  d="M10,15.273 L16.18,19 L14.545,11.971 L20,7.244 L12.809,6.627 L10,0 L7.191,6.627 L0,7.244 L5.455,11.971 L3.82,19 L10,15.273 Z"
+                  id="Shape"
+                />
+              </svg>
               <img
                 onLoad={checkLoad}
                 onError={checkError}
@@ -88,7 +174,7 @@ export function GameList(props) {
                 src={
                   value.background_image !== null
                     ? value.background_image
-                    : require("../images/image_not_found.jpg")
+                    : require("../../images/image_not_found.jpg")
                 }
                 alt=""
               />
@@ -113,7 +199,7 @@ export function GameList(props) {
                   </p>
                 </h3>
               </div>
-            </a>
+            </div>
           );
         })}
       </div>
