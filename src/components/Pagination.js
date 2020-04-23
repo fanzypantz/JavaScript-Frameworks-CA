@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import React, { useContext } from "react";
+import { useHistory } from "react-router-dom";
+import GameContext from "../context/GameContext";
 
 const Pagination = props => {
+  const context = useContext(GameContext);
   const history = useHistory();
 
   const previousPage = () => {
     if (
-      !props.loadingImages &&
+      !context.loadingImages &&
       props.gameData.previous !== null &&
       parseInt(props.page) - 1 > 0
     ) {
@@ -17,7 +19,7 @@ const Pagination = props => {
   };
 
   const nextPage = () => {
-    if (!props.loadingImages && props.gameData.next !== null) {
+    if (!context.loadingImages && props.gameData.next !== null) {
       if (props.page === undefined) {
         history.push(`/${props.filters.page + 1}`);
         props.setNewFilter("page", props.filters.page + 1);

@@ -12,6 +12,7 @@ import Menu from "./components/Menu";
 
 function App() {
   const [pageFade, setPageFade] = useState(true);
+  const [loadingImages, setLoadingImages] = useState(true);
 
   useEffect(() => {
     // console.log("history: ", history.action);
@@ -20,7 +21,9 @@ function App() {
   return (
     <GameProvider
       value={{
-        setPageFade: setPageFade
+        setPageFade: setPageFade,
+        loadingImages: loadingImages,
+        setLoadingImages: setLoadingImages
       }}
     >
       <div className={"pageFade" + (pageFade ? " pageFade__anim" : "")} />

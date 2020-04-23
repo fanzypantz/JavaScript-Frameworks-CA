@@ -29,8 +29,15 @@
 }
 
 .select {
+  background-color: #8a97a9;
+  border: none;
+  color: white;
   border-radius: 0;
   margin-top: 0;
+
+  option {
+    line-height: 40px;
+  }
 }
 
 .library__paginationControl {
