@@ -13,16 +13,6 @@ const Favourites = props => {
     context.setPageFade(false);
   }, []);
 
-  const renderGameList = () => {
-    return (
-      <GameList
-        games={favouriteList}
-        usePageSize={false}
-        updateFavourites={updateFavourites}
-      />
-    );
-  };
-
   const updateFavourites = () => {
     let oldFav = localStorage.getItem("favourites");
     if (oldFav !== null) {
@@ -31,7 +21,15 @@ const Favourites = props => {
   };
 
   if (favouriteList !== null && favouriteList.length > 0) {
-    return <div className={"library"}>{renderGameList()}</div>;
+    return (
+      <div className={"library"}>
+        <GameList
+          games={favouriteList}
+          usePageSize={false}
+          updateFavourites={updateFavourites}
+        />
+      </div>
+    );
   } else {
     return null;
   }
