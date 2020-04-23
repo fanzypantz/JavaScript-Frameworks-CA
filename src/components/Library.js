@@ -57,8 +57,6 @@ const Library = props => {
 
   return (
     <div className={"library"}>
-      {/*I might have moved too much into props from context.*/}
-      {/*But I felt like I wanted most of this contained inside the library, not the context*/}
       <Pagination page={page} gameData={gameData} fetchPage={fetchPage} />
       {gameData !== null && <GameList games={gameData.results} />}
     </div>
