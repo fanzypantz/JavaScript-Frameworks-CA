@@ -6,6 +6,34 @@ const Pagination = props => {
   const context = useContext(GameContext);
   const history = useHistory();
 
+  const getDescendingName = () => {
+    const switchContext = context.filters.ordering.startsWith("-")
+      ? context.filters.ordering.substr(1)
+      : context.filters.ordering;
+    switch (switchContext) {
+      case "name":
+        return "Starting at A";
+      case "rating":
+        return "Highest Score First";
+      default:
+        return "Newest First";
+    }
+  };
+
+  const getAcendingName = () => {
+    const switchContext = context.filters.ordering.startsWith("-")
+      ? context.filters.ordering.substr(1)
+      : context.filters.ordering;
+    switch (switchContext) {
+      case "name":
+        return "Starting at Z";
+      case "rating":
+        return "Lowest Score First";
+      default:
+        return "Newest First";
+    }
+  };
+
   const previousPage = () => {
     if (
       !context.loadingImages &&
@@ -44,12 +72,10 @@ const Pagination = props => {
   };
 
   const handleDirection = e => {
-    context.setNewFilter(
-      "ordering",
-      context.filters.ordering.startsWith("-")
-        ? context.filters.ordering.substr(1)
-        : context.filters.ordering
-    );
+    const newOrder = context.filters.ordering.startsWith("-")
+      ? context.filters.ordering.substr(1)
+      : `-${context.filters.ordering}`;
+    context.setNewFilter("ordering", newOrder);
     context.setNewFilter("page", 1);
     history.push(`/1?sortby=${context.filters.ordering}`);
     props.fetchPage();
@@ -79,8 +105,8 @@ const Pagination = props => {
           context.filters.ordering.startsWith("-") ? "descending" : "ascending"
         }
       >
-        <option value="ascending">Ascending</option>
-        <option value="descending">Descending</option>
+        <option value="ascending">{getAcendingName()}</option>
+        <option value="descending">{getDescendingName()}</option>
       </select>
       <div className={"library__paginationControl"}>
         <button
