@@ -1,4 +1,4 @@
-My JavaScript frameworks course assignment at Noroff frontend development. 
+My JavaScript frameworks course assignment at Noroff frontend development. It is a little app for displaying the https://rawg.io/apidocs api data.
 
 
 ### `yarn start`
