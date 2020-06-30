@@ -50,7 +50,6 @@ const Library = props => {
         }&ordering=${context.filters.ordering}&page_size=${
           context.filters.page_size
         }`;
-    console.log("url: ", url);
     axios.get(url).then(response => {
       setGameData(response.data);
     });

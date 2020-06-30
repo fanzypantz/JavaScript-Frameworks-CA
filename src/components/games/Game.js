@@ -36,7 +36,6 @@ const Game = ({ location }) => {
   };
 
   const gameData = () => {
-    console.log("game: ", game);
     return (
       <div className={"game"}>
         <img
