@@ -18,6 +18,7 @@ const Game = ({ location }) => {
     fetchGame(params.get("id"));
     context.setPageFade(false);
     // setGame(context.gameData.results.find(game => game.id === id));
+    // eslint-disable-next-line
   }, []);
 
   const fetchGame = id => {
@@ -76,6 +77,7 @@ const Game = ({ location }) => {
           <a
             className={"game__website-link"}
             target="_blank"
+            rel="noopener noreferrer"
             href={game.website}
           >
             Go to Website

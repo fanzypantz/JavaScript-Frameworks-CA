@@ -21,6 +21,7 @@ export function GameList(props) {
       setGames(props.games);
     }
     setFavourites(getFavourites());
+    // eslint-disable-next-line
   }, [props.games]);
 
   const checkLoad = () => {

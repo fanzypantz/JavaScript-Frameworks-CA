@@ -11,6 +11,7 @@ const Favourites = props => {
   useEffect(() => {
     updateFavourites();
     context.setPageFade(false);
+    // eslint-disable-next-line
   }, []);
 
   const updateFavourites = () => {

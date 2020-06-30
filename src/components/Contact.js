@@ -8,6 +8,7 @@ const Contact = () => {
 
   useEffect(() => {
     context.setPageFade(false);
+    // eslint-disable-next-line
   }, []);
 
   const handleChange = (formType, value) => {

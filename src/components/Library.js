@@ -34,6 +34,7 @@ const Library = props => {
       fetchPage();
     }
     context.setPageFade(false);
+    // eslint-disable-next-line
   }, []);
 
   const fetchPage = query => {
